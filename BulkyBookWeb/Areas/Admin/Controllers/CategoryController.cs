@@ -1,21 +1,21 @@
-﻿
-using BulkyBook.DataAccess;
+﻿using BulkyBook.DataAccess.Data;
+using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BulkyBookWeb.Controllers
+namespace BulkyBookWeb.Areas.Admin.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext _db;
-        public CategoryController(ApplicationDbContext db)
+        private readonly IUnitOfWork _unitOfWork;
+        public CategoryController(IUnitOfWork unitOfWork)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
         }
         public IActionResult Index()
         {
-            IEnumerable<Category> objList = _db.Categories;
+            IEnumerable<Category> objList = _unitOfWork.Category.GetAll();
 
             return View(objList);
         }
@@ -36,8 +36,8 @@ namespace BulkyBookWeb.Controllers
             }
             if (ModelState.IsValid)
             {
-                _db.Categories.Add(obj);
-                _db.SaveChanges();
+                _unitOfWork.Category.Add(obj);
+                _unitOfWork.Save();
                 TempData["success"] = "Category created successfully...";
                 return RedirectToAction("Index");
             }
@@ -48,20 +48,20 @@ namespace BulkyBookWeb.Controllers
         public IActionResult Edit(int? id)
         {
             if (id == null || id == 0)
-            { 
+            {
                 return NotFound();
-            
+
             }
-            var categoryfromdb = _db.Categories.Find(id);
+            //var categoryfromdb = _db.Categories.Find(id);
             //var categoryfromDbFirst = _db.Categories.SingleOrDefault(c => c.Id == id);
-            //var categoryFromDbSingle = _db.Categories.FirstOrDefault(c => c.Id == id);
-            if (categoryfromdb ==  null)
+            var categoryFromDbSingle = _unitOfWork.Category.GetFirstOrDefault(c => c.Id == id);
+            if (categoryFromDbSingle == null)
             {
                 return NotFound();
             }
 
 
-            return View(categoryfromdb);
+            return View(categoryFromDbSingle);
         }
         //POST
         [HttpPost]
@@ -75,8 +75,8 @@ namespace BulkyBookWeb.Controllers
             }
             if (ModelState.IsValid)
             {
-                _db.Categories.Update(obj);
-                _db.SaveChanges();
+                _unitOfWork.Category.Update(obj);
+                _unitOfWork.Save();
                 TempData["success"] = "Category updated successfully...";
                 return RedirectToAction("Index");
             }
@@ -90,29 +90,30 @@ namespace BulkyBookWeb.Controllers
                 return NotFound();
 
             }
-            var categoryfromdb = _db.Categories.Find(id);
+            //var categoryfromdb = _db.Categories.Find(id);
             //var categoryfromDbFirst = _db.Categories.SingleOrDefault(c => c.Id == id);
-            //var categoryFromDbSingle = _db.Categories.FirstOrDefault(c => c.Id == id);
-            if (categoryfromdb == null)
+            var categoryFromDbSingle = _unitOfWork.Category.GetFirstOrDefault(c => c.Id == id);
+
+            if (categoryFromDbSingle == null)
             {
                 return NotFound();
             }
 
 
-            return View(categoryfromdb);
+            return View(categoryFromDbSingle);
         }
         //POST
-        [HttpPost,ActionName("Delete")]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeletePOST(int? id)
         {
-            var obj = _db.Categories.Find(id);
+            var obj = _unitOfWork.Category.GetFirstOrDefault(c => c.Id == id);
             if (obj == null)
             {
                 return NotFound();
             }
-            _db.Categories.Remove(obj);
-            _db.SaveChanges();
+            _unitOfWork.Category.Remove(obj);
+            _unitOfWork.Save();
             TempData["success"] = "Category deleted successfully...";
             return RedirectToAction("Index");
         }
