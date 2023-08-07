@@ -6,7 +6,7 @@
         <div class="row pb-2">
             <h2 class="text-primary">
                 @(Model.product.Id != 0 ? "Update" : "Create") Product
-                </h2>
+            </h2>
             <hr />
         </div>
         @*For Validation Summary*@
@@ -70,7 +70,7 @@
             <span asp-validation-for="product.CoverTypeId" class="text-danger"></span>
         </div>
         <div class="col-12">
-            @if (Model.product.Id!=0)
+            @if (Model.product.Id != 0)
             {
                 <button type="submit" class="btn btn-primary" style="width:150px;">Update</button>
             }
@@ -82,7 +82,7 @@
                 Back to List
             </a>
         </div>
-        
+
     </div>
 </form>
 
@@ -91,13 +91,13 @@
         <partial name="_ValidationScriptsPartial" />
     }
     <script>
-        function ValidateInput(){
+        function ValidateInput() {
             debugger
-            if(document.getElementById("uploadBox").value == ""){
+            if (document.getElementById("uploadBox").value == "") {
                 Swal.fire({
-                    icon:'error',
-                    title:'Oops...',
-                    text:'Please upload an image!'
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please upload an image!'
                 });
                 return false;
             }
