@@ -10,7 +10,7 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
 
-        public HomeController(ILogger<HomeController> logger,IUnitOfWork unitOfWork)
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
@@ -20,6 +20,19 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
         {
             IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
             return View(productList);
+        }
+
+        public IActionResult Details(int id)
+        {
+            ShoppingCart cartObj = new()
+            {
+                Count = 1,
+                Product = _unitOfWork.Product.GetFirstOrDefault(x => x.Id == id, includeProperties: "Category,CoverType"),
+            };
+
+
+
+            return View(cartObj);
         }
 
         public IActionResult Privacy()
