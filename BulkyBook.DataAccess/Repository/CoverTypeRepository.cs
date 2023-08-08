@@ -19,7 +19,11 @@ namespace BulkyBook.DataAccess.Repository
 
         public void Update(CoverType coverType)
         {
-            _db.CoverTypes.Update(coverType);
+            var existingCoverType = _db.CoverTypes.Find(coverType.Id);
+            if (existingCoverType != null)
+            {
+                _db.Entry(existingCoverType).CurrentValues.SetValues(coverType);
+            }
         }
     }
 }

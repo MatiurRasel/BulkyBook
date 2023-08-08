@@ -7,9 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("BookConnection")
-    ));
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("BookConnection"),
+        b => b.MigrationsAssembly("BulkyBook.DataAccess"))); // Update assembly name
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 var app = builder.Build();
 
